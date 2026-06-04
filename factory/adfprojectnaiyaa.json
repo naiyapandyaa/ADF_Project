@@ -1,0 +1,15 @@
+{
+	"name": "adfprojectnaiyaa",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1c84ce77-a505-4c09-a0a5-a8c7fbfe3f18",
+		"tenantId": "3f4c672e-4631-4a1a-b171-424b019f0f05"
+	}
+}
