@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "ds_meta",
+						"referenceName": "ds_meta_src",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
@@ -32,7 +32,7 @@
 				}
 			},
 			{
-				"name": "ForEach",
+				"name": "ForEach1",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -51,7 +51,7 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Copy data",
+							"name": "Copy data1",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -87,13 +87,17 @@
 								},
 								"enableStaging": false,
 								"translator": {
-									"value": "@if(equals(item().name,'DimPassenger.csv'),pipeline().parameters.DimPassengermapping,if(equals(item().name,'DimAirline.csv'),pipeline().parameters.DimAirlinemapping,pipeline().parameters.DimFilghtmapping))",
-									"type": "Expression"
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
 								}
 							},
 							"inputs": [
 								{
-									"referenceName": "ds_onprem_src",
+									"referenceName": "Ds_src_onprem",
 									"type": "DatasetReference",
 									"parameters": {
 										"p_file_name": {
@@ -105,8 +109,14 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "ds_onprem_sink",
-									"type": "DatasetReference"
+									"referenceName": "ds_sink_onprem",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_file_name": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
