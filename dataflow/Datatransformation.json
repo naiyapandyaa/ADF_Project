@@ -33,15 +33,34 @@
 					"name": "FactBookingsIncrementalSource"
 				},
 				{
-					"dataset": {
-						"referenceName": "ds_Json",
-						"type": "DatasetReference"
+					"linkedService": {
+						"referenceName": "ls_datalake",
+						"type": "LinkedServiceReference"
 					},
-					"name": "APISource"
+					"name": "APIsource"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "UpperCountryCol"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "renameMale"
+				},
+				{
+					"name": "renameFemale"
+				},
+				{
+					"name": "filterAge"
+				},
+				{
+					"name": "NewColOnlytFirstName"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          airline_id as short,",
@@ -51,26 +70,68 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> AirlineSource",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          flight_id as short,",
+				"          flight_number as string,",
+				"          departure_time as string,",
+				"          arrival_time as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> FlightSource",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> PassengerSource",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> FactBookingsIncrementalSource",
 				"source(output(",
-				"          airport_id as integer,",
-				"          airport_name as string,",
-				"          city as string,",
+				"          passenger_id as short,",
+				"          full_name as string,",
+				"          gender as string,",
+				"          age as short,",
 				"          country as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> PassengerSource",
+				"source(output(",
+				"          booking_id as integer,",
+				"          passenger_id as integer,",
+				"          flight_id as integer,",
+				"          airline_id as integer,",
+				"          origin_airport_id as integer,",
+				"          destination_airport_id as integer,",
+				"          booking_date as date,",
+				"          ticket_cost as decimal(10,2),",
+				"          flight_duration_mins as integer,",
+				"          checkin_status as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'documentPerLine') ~> APISource"
+				"     format: 'parquet') ~> FactBookingsIncrementalSource",
+				"source(output(",
+				"          airport_id as short,",
+				"          airport_name as string,",
+				"          city as string,",
+				"          country as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'json',",
+				"     fileSystem: 'bronze',",
+				"     folderPath: 'API',",
+				"     fileName: 'DimAirport.json',",
+				"     documentForm: 'arrayOfDocuments') ~> APIsource",
+				"AirlineSource derive(country = upper(country)) ~> UpperCountryCol",
+				"FlightSource select(mapColumn(",
+				"          flight_id,",
+				"          flight_number,",
+				"          arrival_time",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"PassengerSource derive(gender = regexReplace(gender, 'M', 'Male')) ~> renameMale",
+				"renameMale derive(gender = regexReplace(gender, 'F', 'Female')) ~> renameFemale",
+				"renameFemale filter(age > 25) ~> filterAge",
+				"filterAge derive(First_name = split(full_name,' ')[1]) ~> NewColOnlytFirstName"
 			]
 		}
 	}
