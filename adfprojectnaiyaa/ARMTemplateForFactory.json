@@ -1055,6 +1055,287 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Schedule')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExecuteOnprem",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "onpremIngestion",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"DimAirlinemapping": {
+									"value": "@pipeline().parameters.DimAirlinemapping",
+									"type": "Expression"
+								},
+								"DimFilghtmapping": {
+									"value": "@pipeline().parameters.DimFilghtmapping",
+									"type": "Expression"
+								},
+								"DimPassengermapping": {
+									"value": "@pipeline().parameters.DimPassengermapping",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "ExecuteAPI",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ExecuteOnprem",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "API_Ingestion",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "ExecuteSqltodatalake",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ExecuteAPI",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "SQLtoDatalake",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"DimAirlinemapping": {
+						"type": "object",
+						"defaultValue": {
+							"type": "TabularTranslator",
+							"mappings": [
+								{
+									"source": {
+										"name": "airline_id",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "airline_id",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "airline_name",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "airline_name",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "country",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "country",
+										"type": "String",
+										"physicalType": "String"
+									}
+								}
+							],
+							"typeConversion": true,
+							"typeConversionSettings": {
+								"allowDataTruncation": true,
+								"treatBooleanAsNumber": false
+							}
+						}
+					},
+					"DimFilghtmapping": {
+						"type": "object",
+						"defaultValue": {
+							"type": "TabularTranslator",
+							"mappings": [
+								{
+									"source": {
+										"name": "flight_id",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "flight_id",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "flight_number",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "flight_number",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "departure_time",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "departure_time",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "arrival_time",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "arrival_time",
+										"type": "String",
+										"physicalType": "String"
+									}
+								}
+							],
+							"typeConversion": true,
+							"typeConversionSettings": {
+								"allowDataTruncation": true,
+								"treatBooleanAsNumber": false
+							}
+						}
+					},
+					"DimPassengermapping": {
+						"type": "object",
+						"defaultValue": {
+							"type": "TabularTranslator",
+							"mappings": [
+								{
+									"source": {
+										"name": "passenger_id",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "passenger_id",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "full_name",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "full_name",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "gender",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "gender",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "age",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "age",
+										"type": "String",
+										"physicalType": "String"
+									}
+								},
+								{
+									"source": {
+										"name": "country",
+										"type": "String",
+										"physicalType": "String"
+									},
+									"sink": {
+										"name": "country",
+										"type": "String",
+										"physicalType": "String"
+									}
+								}
+							],
+							"typeConversion": true,
+							"typeConversionSettings": {
+								"allowDataTruncation": true,
+								"treatBooleanAsNumber": false
+							}
+						}
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/onpremIngestion')]",
+				"[concat(variables('factoryId'), '/pipelines/API_Ingestion')]",
+				"[concat(variables('factoryId'), '/pipelines/SQLtoDatalake')]"
+			]
 		}
 	]
 }
