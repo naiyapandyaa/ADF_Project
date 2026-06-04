@@ -1,0 +1,77 @@
+{
+	"name": "Datatransformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_airline_src",
+						"type": "DatasetReference"
+					},
+					"name": "AirlineSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_flight_src",
+						"type": "DatasetReference"
+					},
+					"name": "FlightSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_passenger_src",
+						"type": "DatasetReference"
+					},
+					"name": "PassengerSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_factbookingsParquet_src",
+						"type": "DatasetReference"
+					},
+					"name": "FactBookingsIncrementalSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_Json",
+						"type": "DatasetReference"
+					},
+					"name": "APISource"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          airline_id as short,",
+				"          airline_name as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> AirlineSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FlightSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> PassengerSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> FactBookingsIncrementalSource",
+				"source(output(",
+				"          airport_id as integer,",
+				"          airport_name as string,",
+				"          city as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> APISource"
+			]
+		}
+	}
+}
