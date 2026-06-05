@@ -16,6 +16,7 @@ Built an end-to-end ETL pipeline using Azure Data Factory (ADF) for data ingesti
 
 # 3.Azure SQL to DataLake
 <img width="1782" height="967" alt="Screenshot 2026-06-04 150039" src="https://github.com/user-attachments/assets/60146d16-c8a2-4946-9789-61fd0aefac0e" />
+<img width="1522" height="681" alt="image" src="https://github.com/user-attachments/assets/991ef6be-7878-472d-96c5-819fb7820f74" />
 
 # 4.Scedule Pipeline
 <img width="1570" height="872" alt="Screenshot 2026-06-04 150118" src="https://github.com/user-attachments/assets/0a32fa49-3aa6-482b-90ca-2c6ae1cb39e3" />
