@@ -6,6 +6,11 @@ Built an end-to-end ETL pipeline using Azure Data Factory (ADF) for data ingesti
 # Resources
 <img width="1460" height="827" alt="image" src="https://github.com/user-attachments/assets/f8a76262-e5e9-4d12-a093-3eb316fc59ba" />
 
+# Integration Runtime(Self-Hosted)
+<img width="1792" height="832" alt="image" src="https://github.com/user-attachments/assets/2e518712-453c-4083-be45-ff1283ca8ed6" />
+
+# Linked Services
+<img width="1765" height="905" alt="image" src="https://github.com/user-attachments/assets/481e02e5-9ab7-4b33-895e-6beee0ba9669" />
 
 # 1.OnpremIngestion
 <img width="1855" height="992" alt="Screenshot 2026-06-04 145952" src="https://github.com/user-attachments/assets/d82dbd69-916a-46ec-bbad-03bb42397dc5" />
